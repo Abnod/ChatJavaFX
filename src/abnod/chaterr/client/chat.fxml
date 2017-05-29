@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane minHeight="200" minWidth="200" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="abnod.chaterr.client.ChatController">
+   <children>
+
+
+       <BorderPane layoutX="142.0" layoutY="200.0" minHeight="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+           <top>
+            <HBox>
+               <children>
+                     <MenuBar maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" BorderPane.alignment="CENTER" HBox.hgrow="NEVER">
+                        <menus>
+                        <Menu mnemonicParsing="false" text="File">
+                           <items>
+                              <MenuItem mnemonicParsing="false" onAction="#close" text="Exit" />
+                           </items>
+                        </Menu>
+                            <Menu mnemonicParsing="false" text="Help">
+                           <items>
+                                   <MenuItem mnemonicParsing="false" text="About" />
+                           </items>
+                            </Menu>
+                        </menus>
+                     </MenuBar>
+               </children>
+            </HBox>
+           </top>
+           <center>
+               <AnchorPane BorderPane.alignment="CENTER">
+                  <children>
+                      <SplitPane dividerPositions="0.8" layoutX="166.0" layoutY="76.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                         <items>
+                             <AnchorPane minHeight="50.0" minWidth="100.0" prefHeight="160.0" prefWidth="100.0">
+                                <children>
+                                    <ListView fx:id="chatWindow" layoutX="94.0" layoutY="102.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                </children>
+                             </AnchorPane>
+                             <AnchorPane minHeight="50.0" minWidth="50.0" prefHeight="160.0" prefWidth="100.0">
+                                <children>
+                                    <ListView fx:id="userWindow" layoutX="-63.0" layoutY="77.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                </children>
+                             </AnchorPane>
+                         </items>
+                      </SplitPane>
+                  </children>
+               </AnchorPane>
+           </center>
+           <bottom>
+            <AnchorPane maxHeight="25.0" minHeight="25.0">
+               <children>
+                     <HBox fx:id="textBox" alignment="BOTTOM_LEFT" layoutY="5.0" maxHeight="25.0" minHeight="25.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
+                        <children>
+                            <TextField fx:id="inputField" onAction="#sendMessage" promptText="Type your text here!" HBox.hgrow="ALWAYS" />
+                            <Button defaultButton="true" maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0" onAction="#sendMessage" prefHeight="25.0" prefWidth="45.0" text="Send" HBox.hgrow="NEVER" />
+                        </children>
+                     </HBox>
+                  <HBox fx:id="authBox" maxHeight="25.0" minHeight="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <TextField fx:id="loginField" promptText="Login" HBox.hgrow="ALWAYS" />
+                        <PasswordField fx:id="passwordField" onAction="#sendAuth" promptText="Password" HBox.hgrow="ALWAYS" />
+                      <Button maxWidth="50.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendAuth" text="Login" HBox.hgrow="NEVER" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+           </bottom>
+       </BorderPane>
+   </children>
+</AnchorPane>
