@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ChatController implements Initializable {
-    private final String SERVER_IP = "localhost";
+    private final String SERVER_IP = "10.0.0.58";
     private final int SERVER_PORT = 8189;
     @FXML
     private TextField inputField;
@@ -45,9 +45,11 @@ public class ChatController implements Initializable {
     private boolean autorized;
 
     public void sendMessage() throws IOException {
+        if (!inputField.getText().equals("")){
             outputStream.writeUTF(inputField.getText());
             inputField.clear();
             inputField.requestFocus();
+        }
     }
 
     public void sendAuth() {
@@ -155,7 +157,7 @@ public class ChatController implements Initializable {
 
     private void viewMessage(String s) {
         Platform.runLater(() -> chatMessages.add(s));
-        chatWindow.setItems(chatMessages);
+//        chatWindow.setItems(chatMessages);
     }
 
     private void usersAdd(String s) {

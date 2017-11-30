@@ -98,7 +98,7 @@ public class ClientHandler {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jetbrains3?" +
-                    "user=test&password=test");
+                    "user=root&password=root");
             statement = connection.prepareStatement("SELECT password, nick FROM users WHERE login = ?;");
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Database connection error");
