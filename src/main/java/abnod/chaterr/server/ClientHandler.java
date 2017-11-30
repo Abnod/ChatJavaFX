@@ -22,8 +22,6 @@ public class ClientHandler {
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
 
-
-
             Thread thread = new Thread(()-> {
                try{
                    connectDB();
@@ -43,25 +41,24 @@ public class ClientHandler {
                    while (true){
                        String message = inputStream.readUTF();
                        if (message.equals("/shutdown")){server.close();}
-                       if (message.startsWith("/w ")){server.sendPrivateMessage(message, this);}
+                       else if (message.startsWith("/w ")){server.sendPrivateMessage(message, this);}
                        else {server.broadcastMessage(message, getNickName());}
                    }
                } catch (IOException e) {
-                   System.out.println("client loose connection");
+                   System.out.println("client lost connection");
                }finally{
                    server.unsubscribe(this);
                    try {
                        socket.close();
                    } catch (IOException e) {
-                       e.printStackTrace();
+                       System.out.println("can't close socket");
                    }
                }
             });
             thread.setDaemon(true);
             thread.start();
         } catch (IOException e) {
-            System.out.println("ex5");
-            e.printStackTrace();
+            System.out.println("client handler error");
         }
     }
 
@@ -75,7 +72,7 @@ public class ClientHandler {
     }
 
     public String getUserPassword(String login, String password){
-        ResultSet rs = null;
+        ResultSet rs;
         try {
             statement.setString(1, login);
             rs = statement.executeQuery();
@@ -97,8 +94,7 @@ public class ClientHandler {
     public void connectDB(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jetbrains3?" +
-                    "user=root&password=root");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jetbrains3?user=root&password=root");
             statement = connection.prepareStatement("SELECT password, nick FROM users WHERE login = ?;");
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Database connection error");
@@ -111,8 +107,7 @@ public class ClientHandler {
             statement.close();
             connection.close();
         } catch (SQLException e) {
-            System.out.println("ex3");
-            e.printStackTrace();
+            System.out.println("database closing error");
         }
     }
 

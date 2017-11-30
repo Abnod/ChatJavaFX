@@ -18,7 +18,7 @@ public class Server {
                 new ClientHandler(socket, this);
             }
         } catch (IOException e) {
-            System.out.println("ex6");
+            System.out.println("socket exception");
             e.printStackTrace();
         }
     }

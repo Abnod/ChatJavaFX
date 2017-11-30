@@ -11,7 +11,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -24,25 +23,36 @@ public class ChatController implements Initializable {
     private final String SERVER_IP = "10.0.0.58";
     private final int SERVER_PORT = 8189;
     @FXML
-    private TextField inputField;
+    private TextField inputField, loginField;
     @FXML
-    private ListView <String> chatWindow;
-    @FXML
-    private ListView<String> userWindow;
-    @FXML
-    private TextField loginField;
+    private ListView <String> chatWindow, userWindow;
     @FXML
     private PasswordField passwordField;
     @FXML
-    private HBox textBox;
-    @FXML
-    private HBox authBox;
-    private ObservableList<String> chatMessages = FXCollections.observableArrayList();
-    private ObservableList<String> userList = FXCollections.observableArrayList();
+    private HBox textBox, authBox;
+    private ObservableList<String> chatMessages, userList;
+
     private Socket socket;
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
+
     private boolean autorized;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        chatWindow.setCellFactory(list -> new ListCell<String>() {
+            {
+                Text text = new Text();
+                text.wrappingWidthProperty().bind(list.widthProperty().subtract(15));
+                text.textProperty().bind(itemProperty());
+
+                setPrefWidth(0);
+                setGraphic(text);
+            }
+        });
+        chatMessages = FXCollections.observableArrayList();
+        userList = FXCollections.observableArrayList();
+    }
 
     public void sendMessage() throws IOException {
         if (!inputField.getText().equals("")){
@@ -72,26 +82,6 @@ public class ChatController implements Initializable {
 
     }
 
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        chatWindow.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override
-            public ListCell<String> call(final ListView<String> list) {
-                return new ListCell<String>() {
-                    {
-                        Text text = new Text();
-                        text.wrappingWidthProperty().bind(list.widthProperty().subtract(15));
-                        text.textProperty().bind(itemProperty());
-
-                        setPrefWidth(0);
-                        setGraphic(text);
-                    }
-                };
-            }
-        });
-    }
-
     private void connect() throws IOException {
         socket = new Socket(SERVER_IP, SERVER_PORT);
         inputStream = new DataInputStream(socket.getInputStream());
@@ -107,6 +97,7 @@ public class ChatController implements Initializable {
                         case "/authok": {
                             autorized = true;
                             viewMessage("Server: Login successful");
+                            viewMessage("Server: for private message write: /w nickname message");
                             authorize();
                             break;
                         }
@@ -146,7 +137,7 @@ public class ChatController implements Initializable {
                 try {
                     socket.close();
                 } catch (IOException e) {
-                    System.out.println("ex2");
+                    System.out.println("cannot close socket");
                     e.printStackTrace();
                 }
             }
@@ -157,7 +148,6 @@ public class ChatController implements Initializable {
 
     private void viewMessage(String s) {
         Platform.runLater(() -> chatMessages.add(s));
-//        chatWindow.setItems(chatMessages);
     }
 
     private void usersAdd(String s) {
