@@ -147,6 +147,8 @@ public class ChatController implements Initializable {
                 userList.clear();
                 try {
                     socket.close();
+                    inputStream.close();
+                    outputStream.close();
                 } catch (IOException e) {
                     System.out.println("cannot close socket");
                     e.printStackTrace();

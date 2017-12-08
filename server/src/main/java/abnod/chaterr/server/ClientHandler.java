@@ -50,6 +50,8 @@ class ClientHandler {
                    server.unsubscribe(this);
                    try {
                        socket.close();
+                       inputStream.close();
+                       outputStream.close();
                    } catch (IOException e) {
                        System.out.println("can't close socket");
                    }

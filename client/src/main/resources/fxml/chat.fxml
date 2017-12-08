@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="abnod.chaterr.client.ChatController">
+<VBox maxHeight="Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="abnod.chaterr.client.ChatController" stylesheets="/main.css">
             <HBox maxHeight="25" minHeight="25">
                 <MenuBar maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" HBox.hgrow="NEVER">
                     <Menu mnemonicParsing="false" text="File">
@@ -40,7 +40,7 @@
                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <TextField fx:id="loginField" promptText="Login" HBox.hgrow="ALWAYS" />
                     <PasswordField fx:id="passwordField" onAction="#sendAuth" promptText="Password" HBox.hgrow="ALWAYS" />
-                  <Button maxWidth="50.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendAuth" text="Login" HBox.hgrow="NEVER" />
+                  <Button styleClass="loginButton" maxWidth="50.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendAuth" text="Login" HBox.hgrow="NEVER" />
                 </HBox>
             </AnchorPane>
 </VBox>
