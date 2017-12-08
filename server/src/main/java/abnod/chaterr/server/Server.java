@@ -13,9 +13,12 @@ class Server {
 
         try(ServerSocket serverSocket = new ServerSocket(8189)){
             clients = new Vector<>();
+            System.out.println("Server launched.");
             while (true){
                 Socket socket = serverSocket.accept();
                 new ClientHandler(socket, this);
+                System.out.printf("client with ip %s connected", socket.getInetAddress().getHostAddress());
+                System.out.println(System.lineSeparator());
             }
         } catch (IOException e) {
             System.out.println("socket exception");

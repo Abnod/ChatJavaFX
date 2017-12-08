@@ -52,6 +52,12 @@ public class ChatController implements Initializable {
         });
         chatMessages = FXCollections.observableArrayList();
         userList = FXCollections.observableArrayList();
+        chatWindow.setItems(chatMessages);
+        try {
+            connect();
+        } catch (IOException e) {
+            viewMessage("server not found");
+        }
     }
 
     public void sendMessage() throws IOException {
@@ -64,7 +70,9 @@ public class ChatController implements Initializable {
 
     public void sendAuth() {
         try {
-            connect();
+            if (socket == null){
+                connect();
+            }
             if (!loginField.getText().isEmpty() && !passwordField.getText().isEmpty()){
                 outputStream.writeUTF("/autho " + loginField.getText() + " " + passwordField.getText());
             } else {
@@ -93,7 +101,6 @@ public class ChatController implements Initializable {
 
         Thread inputThread = new Thread(() -> {
             try {
-                chatWindow.setItems(chatMessages);
                 userWindow.setItems(userList);
                 while (true) {
                     String s = inputStream.readUTF();
