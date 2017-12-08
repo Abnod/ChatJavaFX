@@ -5,11 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
-public class Server {
+class Server {
 
     private Vector<ClientHandler> clients;
 
-    public Server(){
+    Server(){
 
         try(ServerSocket serverSocket = new ServerSocket(8189)){
             clients = new Vector<>();
@@ -23,7 +23,7 @@ public class Server {
         }
     }
 
-    public void subscribe(ClientHandler clientHandler){
+    void subscribe(ClientHandler clientHandler){
         clients.add(clientHandler);
         broadcastMessage(clientHandler.getNickName() + " joined chat", "Server");
         for(ClientHandler clientHandler1 : clients){
@@ -33,20 +33,20 @@ public class Server {
         }
     }
 
-    public void unsubscribe(ClientHandler clientHandler){
+    void unsubscribe(ClientHandler clientHandler){
         clients.remove(clientHandler);
         broadcastMessage(clientHandler.getNickName(), "/usrrmv");
         broadcastMessage(clientHandler.getNickName() + " leave chat", "Server");
     }
 
-    public void broadcastMessage (String message, String senderNickName){
+    void broadcastMessage(String message, String senderNickName){
         String msg = senderNickName + ": " + message;
         for (ClientHandler client : clients){
             client.sendMessage(msg);
         }
     }
 
-    public void sendPrivateMessage (String message, ClientHandler sender){
+    void sendPrivateMessage (String message, ClientHandler sender){
         String[] msg = message.split(" ");
         String text = message.substring(message.indexOf(msg[2]));
         boolean privateSent = false;
@@ -62,12 +62,12 @@ public class Server {
         }
     }
 
-    public void close(){
+    void close(){
         broadcastMessage("Server Shutdown", "Server");
         System.exit(0);
     }
 
-    public boolean isNickNameNotInUse(String name){
+    boolean isNickNameNotInUse(String name){
         for (ClientHandler clientHandler : clients){
             if (name.equals(clientHandler.getNickName())){
                 return false;

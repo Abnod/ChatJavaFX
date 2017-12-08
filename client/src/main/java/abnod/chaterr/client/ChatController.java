@@ -65,7 +65,11 @@ public class ChatController implements Initializable {
     public void sendAuth() {
         try {
             connect();
-            outputStream.writeUTF("/autho " + loginField.getText() + " " + passwordField.getText());
+            if (!loginField.getText().isEmpty() && !passwordField.getText().isEmpty()){
+                outputStream.writeUTF("/autho " + loginField.getText() + " " + passwordField.getText());
+            } else {
+                viewMessage("login and password fields cannot be empty");
+            }
         } catch (IOException e) {
             viewMessage("Server not available");
         }

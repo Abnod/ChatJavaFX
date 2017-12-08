@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.sql.*;
 
-public class ClientHandler {
+class ClientHandler {
     private Server server;
     private Socket socket;
     private DataOutputStream outputStream;
@@ -15,7 +15,7 @@ public class ClientHandler {
     private PreparedStatement statement;
     private String nickName;
 
-    public ClientHandler(Socket socket, Server server){
+    ClientHandler(Socket socket, Server server){
         try {
             this.socket = socket;
             this.server = server;
@@ -62,7 +62,7 @@ public class ClientHandler {
         }
     }
 
-    public void sendMessage(String message){
+    void sendMessage(String message){
         try {
             outputStream.writeUTF(message);
         } catch (IOException e) {
@@ -71,7 +71,7 @@ public class ClientHandler {
         }
     }
 
-    public String getUserPassword(String login, String password){
+    private String getUserPassword(String login, String password){
         ResultSet rs;
         try {
             statement.setString(1, login);
@@ -91,7 +91,7 @@ public class ClientHandler {
         return null;
     }
 
-    public void connectDB(){
+    private void connectDB(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jetbrains3?user=root&password=root");
@@ -102,7 +102,7 @@ public class ClientHandler {
         }
     }
 
-    public void closeDB(){
+    private void closeDB(){
         try {
             statement.close();
             connection.close();
@@ -111,7 +111,7 @@ public class ClientHandler {
         }
     }
 
-    public String getNickName() {
+    String getNickName() {
         return nickName;
     }
 
