@@ -1,5 +1,22 @@
-.loginButton{
+.loginButton {
     -fx-background-color: forestgreen;
     -fx-text-fill: white;
     -fx-background-radius: 0px;
+}
+
+.authBox {
+    -fx-background-image: url("/loginBg.jpg");
+}
+
+.top_panel {
+    -fx-background-color: black;
+    -fx-padding: 5px;
+}
+
+.exit_button {
+    -fx-image: url("/power30.png");
+}
+
+.exit_button:hover {
+    -fx-image: url("/power30active.png");
 }

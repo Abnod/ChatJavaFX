@@ -1,5 +1,6 @@
 package abnod.chaterr.client;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,8 +10,9 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -25,18 +27,22 @@ public class ChatController implements Initializable {
     @FXML
     private TextField inputField, loginField;
     @FXML
-    private ListView <String> chatWindow, userWindow;
+    private ListView<String> chatWindow, userWindow;
     @FXML
     private PasswordField passwordField;
     @FXML
-    private HBox textBox, authBox;
+    private VBox textBox, authBox;
     private ObservableList<String> chatMessages, userList;
 
     private Socket socket;
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
+    private FadeTransition ft;
 
     private boolean autorized;
+
+    //todo
+    // login(transp)-hello(swipe)-chat
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -58,10 +64,24 @@ public class ChatController implements Initializable {
         } catch (IOException e) {
             viewMessage("server not found");
         }
+
+        ft = new FadeTransition();
+        ft.setNode(authBox);
+        ft.setDuration(new Duration(500));
+        ft.setFromValue(0.5);
+        ft.setToValue(0.0);
+        ft.setCycleCount(1);
+        ft.setAutoReverse(true);
+        ft.setOnFinished(event -> {
+            if (authBox.isVisible()) {
+                authBox.setVisible(false);
+                textBox.setDisable(false);
+            }
+        });
     }
 
     public void sendMessage() throws IOException {
-        if (!inputField.getText().equals("")){
+        if (!inputField.getText().equals("")) {
             outputStream.writeUTF(inputField.getText());
             inputField.clear();
             inputField.requestFocus();
@@ -70,10 +90,10 @@ public class ChatController implements Initializable {
 
     public void sendAuth() {
         try {
-            if (socket == null){
-                connect();
-            }
-            if (!loginField.getText().isEmpty() && !passwordField.getText().isEmpty()){
+            if (!loginField.getText().isEmpty() && !passwordField.getText().isEmpty()) {
+                if (socket.isClosed()) {
+                    connect();
+                }
                 outputStream.writeUTF("/autho " + loginField.getText() + " " + passwordField.getText());
             } else {
                 viewMessage("login and password fields cannot be empty");
@@ -85,10 +105,10 @@ public class ChatController implements Initializable {
 
     private void authorize() {
         if (autorized) {
-            textBox.setVisible(true);
-            authBox.setVisible(false);
+            ft.play();
         } else {
-            textBox.setVisible(false);
+            authBox.setOpacity(1);
+            textBox.setDisable(true);
             authBox.setVisible(true);
         }
 
@@ -98,7 +118,6 @@ public class ChatController implements Initializable {
         socket = new Socket(SERVER_IP, SERVER_PORT);
         inputStream = new DataInputStream(socket.getInputStream());
         outputStream = new DataOutputStream(socket.getOutputStream());
-
         Thread inputThread = new Thread(() -> {
             try {
                 userWindow.setItems(userList);
@@ -131,20 +150,22 @@ public class ChatController implements Initializable {
                 }
                 while (true) {
                     String s = inputStream.readUTF();
-                    if(s.startsWith("/usradd")){
+                    if (s.startsWith("/usradd")) {
                         String usradd = s.substring(9);
                         usersAdd(usradd);
-                    } else if (s.startsWith("/usrrmv")){
+                    } else if (s.startsWith("/usrrmv")) {
                         String usrrmv = s.substring(9);
                         usersRemove(usrrmv);
-                    } else {viewMessage(s);}
+                    } else {
+                        viewMessage(s);
+                    }
                 }
             } catch (IOException e) {
                 viewMessage("Connection to server lost");
             } finally {
                 autorized = false;
                 authorize();
-                userList.clear();
+                Platform.runLater(() -> userList.clear());
                 try {
                     socket.close();
                     inputStream.close();
@@ -164,7 +185,7 @@ public class ChatController implements Initializable {
     }
 
     private void usersAdd(String s) {
-        if(!userList.contains(s)){
+        if (!userList.contains(s)) {
             Platform.runLater(() -> userList.add(s));
         }
     }
