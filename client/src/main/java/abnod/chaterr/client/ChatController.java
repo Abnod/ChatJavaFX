@@ -10,7 +10,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -31,7 +31,7 @@ public class ChatController implements Initializable {
     @FXML
     private PasswordField passwordField;
     @FXML
-    private VBox textBox, authBox;
+    private AnchorPane authBox, textBox;
     private ObservableList<String> chatMessages, userList;
 
     private Socket socket;
@@ -91,7 +91,7 @@ public class ChatController implements Initializable {
     public void sendAuth() {
         try {
             if (!loginField.getText().isEmpty() && !passwordField.getText().isEmpty()) {
-                if (socket.isClosed()) {
+                if (socket == null || socket.isClosed()) {
                     connect();
                 }
                 outputStream.writeUTF("/autho " + loginField.getText() + " " + passwordField.getText());

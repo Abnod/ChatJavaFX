@@ -15,8 +15,8 @@ public class Main extends Application {
         primaryStage.setTitle("ChatterR");
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setWidth(600);
-        primaryStage.setHeight(600);
-        primaryStage.setMinHeight(600);
+        primaryStage.setHeight(500);
+        primaryStage.setMinHeight(500);
         primaryStage.setMinWidth(600);
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);

@@ -6,11 +6,19 @@
 
 .authBox {
     -fx-background-image: url("/loginBg.jpg");
+    -fx-background-position: top left;
 }
 
-.top_panel {
-    -fx-background-color: black;
+.loginBox{
+    -fx-background-image: url("/authBack.jpg") ;
+    -fx-background-position: center;
+}
+
+.top_panel{
     -fx-padding: 5px;
+}
+
+.textBox{
 }
 
 .exit_button {

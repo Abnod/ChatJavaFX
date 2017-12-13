@@ -15,42 +15,57 @@
 
 <AnchorPane stylesheets="/main.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="abnod.chaterr.client.ChatController">
-    <HBox styleClass="top_panel" minHeight="40" maxHeight="40" prefHeight="40" AnchorPane.leftAnchor="0.0"
-          AnchorPane.rightAnchor="0.0" nodeOrientation="RIGHT_TO_LEFT">
-        <ImageView styleClass="exit_button" fitWidth="30" fitHeight="30" pickOnBounds="true" onMouseClicked="#close"/>
-    </HBox>
-    <VBox fx:id="textBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          AnchorPane.topAnchor="40.0" disable="true">
-        <HBox maxHeight="25" minHeight="25">
-            <MenuBar maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" HBox.hgrow="NEVER">
-                <Menu mnemonicParsing="false" text="File">
-                    <MenuItem mnemonicParsing="false" onAction="#close" text="Exit"/>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <MenuItem mnemonicParsing="false" text="About"/>
-                </Menu>
-            </MenuBar>
+
+    <AnchorPane fx:id="textBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" disable="true">
+        <HBox styleClass="top_panel" minHeight="40" maxHeight="40" prefHeight="40" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" nodeOrientation="RIGHT_TO_LEFT">
+            <ImageView styleClass="exit_button" fitWidth="30" fitHeight="30" pickOnBounds="true"
+                       onMouseClicked="#close"/>
         </HBox>
-        <HBox VBox.vgrow="ALWAYS">
-            <SplitPane dividerPositions="0.8" HBox.hgrow="ALWAYS">
-                <ListView fx:id="chatWindow" minWidth="200"/>
-                <ListView fx:id="userWindow" minWidth="100"/>
-            </SplitPane>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="40.0">
+            <HBox maxHeight="25" minHeight="25">
+                <MenuBar maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" HBox.hgrow="NEVER">
+                    <Menu mnemonicParsing="false" text="File">
+                        <MenuItem mnemonicParsing="false" onAction="#close" text="Exit"/>
+                    </Menu>
+                    <Menu mnemonicParsing="false" text="Help">
+                        <MenuItem mnemonicParsing="false" text="About"/>
+                    </Menu>
+                </MenuBar>
+            </HBox>
+            <HBox VBox.vgrow="ALWAYS">
+                <SplitPane dividerPositions="0.8" HBox.hgrow="ALWAYS">
+                    <ListView fx:id="chatWindow" minWidth="200"/>
+                    <ListView fx:id="userWindow" minWidth="100"/>
+                </SplitPane>
+            </HBox>
+            <HBox alignment="BOTTOM_LEFT" layoutY="5.0" maxHeight="25.0" minHeight="25.0">
+                <TextField fx:id="inputField" onAction="#sendMessage" promptText="Type your text here!"
+                           HBox.hgrow="ALWAYS"/>
+                <Button defaultButton="true" maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0"
+                        onAction="#sendMessage" text="Send" HBox.hgrow="NEVER"/>
+            </HBox>
+        </VBox>
+    </AnchorPane>
+    <AnchorPane styleClass="authBox" fx:id="authBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox styleClass="top_panel" minHeight="40" maxHeight="40" prefHeight="40" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" nodeOrientation="RIGHT_TO_LEFT">
+            <ImageView styleClass="exit_button" fitWidth="30" fitHeight="30" pickOnBounds="true"
+                       onMouseClicked="#close"/>
         </HBox>
-        <HBox alignment="BOTTOM_LEFT" layoutY="5.0" maxHeight="25.0" minHeight="25.0">
-            <TextField fx:id="inputField" onAction="#sendMessage" promptText="Type your text here!"
-                       HBox.hgrow="ALWAYS"/>
-            <Button defaultButton="true" maxHeight="25.0" maxWidth="45.0" minHeight="25.0" minWidth="45.0"
-                    onAction="#sendMessage" text="Send" HBox.hgrow="NEVER"/>
-        </HBox>
-    </VBox>
-    <VBox styleClass="authBox" fx:id="authBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" alignment="BOTTOM_CENTER">
-        <HBox alignment="BOTTOM_LEFT" maxHeight="25.0" minHeight="25.0" VBox.vgrow="NEVER" AnchorPane.bottomAnchor="0">
-            <TextField fx:id="loginField" promptText="Login" HBox.hgrow="ALWAYS"/>
-            <PasswordField fx:id="passwordField" onAction="#sendAuth" promptText="Password" HBox.hgrow="ALWAYS"/>
-            <Button maxWidth="50.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendAuth"
-                    styleClass="loginButton" text="Login" HBox.hgrow="NEVER"/>
-        </HBox>
-    </VBox>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" alignment="CENTER">
+            <VBox styleClass="loginBox" spacing="30" minHeight="200" maxHeight="200" minWidth="300" maxWidth="300"
+                  alignment="CENTER">
+                <TextField fx:id="loginField" promptText="Login" maxWidth="240" minWidth="240"/>
+                <PasswordField fx:id="passwordField" onAction="#sendAuth" promptText="Password" maxWidth="240"
+                               minWidth="240"/>
+                <Button maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#sendAuth"
+                        styleClass="loginButton" text="Login"/>
+            </VBox>
+        </VBox>
+    </AnchorPane>
 </AnchorPane>
