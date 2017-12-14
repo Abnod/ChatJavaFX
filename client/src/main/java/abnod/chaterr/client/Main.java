@@ -11,7 +11,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/chat.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/chat.fxml"));
+        Parent root = loader.load();
+        ChatController controller = loader.getController();
+        controller.setStage(primaryStage);
         primaryStage.setTitle("ChatterR");
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setWidth(600);

@@ -1,3 +1,8 @@
+@font-face {
+    font-family: RuslanDisplay;
+    src: url('/RuslanDisplay.ttf');
+}
+
 .loginButton {
     -fx-background-color: forestgreen;
     -fx-text-fill: white;
@@ -15,14 +20,22 @@
 }
 
 .top_panel{
-    -fx-padding: 5px;
+    -fx-padding: 2px;
 }
 
 .textBox{
+    -fx-background-image: url("/loginBg.jpg");
 }
 
 .helloBox{
-    -fx-background-color: forestgreen;
+    -fx-background-image: url("/helloBack.jpg");
+    -fx-background-repeat: stretch;
+    -fx-alignment: center;
+}
+
+.helloText{
+    -fx-font: 80pt "RuslanDisplay";
+    -fx-fill: white;
 }
 
 .exit_button {
@@ -31,4 +44,12 @@
 
 .exit_button:hover {
     -fx-image: url("/power30active.png");
+}
+
+.min_button {
+    -fx-image: url("/min30.png");
+}
+
+.min_button:hover {
+    -fx-image: url("/min30Active.png");
 }

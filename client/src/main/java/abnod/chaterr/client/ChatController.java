@@ -12,8 +12,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.DataInputStream;
@@ -24,7 +25,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ChatController implements Initializable {
-    private final String SERVER_IP = "localhost";
+    private final String SERVER_IP = "10.0.0.58";
     private final int SERVER_PORT = 8189;
     @FXML
     private TextField inputField, loginField;
@@ -35,14 +36,19 @@ public class ChatController implements Initializable {
     @FXML
     private AnchorPane authBox, textBox;
     @FXML
-    private Pane helloBox;
+    private VBox helloBox;
+    @FXML
+    private Text nickHello;
+
     private ObservableList<String> chatMessages, userList;
 
+    private Stage stage;
     private Socket socket;
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
     private FadeTransition ft;
 
+    private String nickName;
     private boolean autorized;
 
     @Override
@@ -122,6 +128,7 @@ public class ChatController implements Initializable {
 
     private void authorize() {
         if (autorized) {
+            nickHello.setText(nickName);
             ft.play();
         } else {
             authBox.setOpacity(1);
@@ -147,6 +154,7 @@ public class ChatController implements Initializable {
                             autorized = true;
                             viewMessage("Server: Login successful");
                             viewMessage("Server: for private message write: /w nickname message");
+                            nickName = inputStream.readUTF();
                             authorize();
                             break;
                         }
@@ -211,6 +219,14 @@ public class ChatController implements Initializable {
 
     private void usersRemove(String s) {
         Platform.runLater(() -> userList.remove(s));
+    }
+
+    public void minimize(){
+        stage.setIconified(true);
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
     public void close() {

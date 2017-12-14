@@ -13,17 +13,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.ImageView?>
 
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Text?>
 <AnchorPane stylesheets="/main.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="abnod.chaterr.client.ChatController">
-    <AnchorPane fx:id="textBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+    <AnchorPane styleClass="textBox" fx:id="textBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" disable="true">
         <HBox styleClass="top_panel" minHeight="40" maxHeight="40" prefHeight="40" AnchorPane.leftAnchor="0.0"
               AnchorPane.rightAnchor="0.0" nodeOrientation="RIGHT_TO_LEFT">
-            <ImageView styleClass="exit_button" fitWidth="30" fitHeight="30" pickOnBounds="true"
+            <ImageView styleClass="exit_button" fitWidth="35" fitHeight="35" pickOnBounds="true"
                        onMouseClicked="#close"/>
+            <ImageView styleClass="min_button" fitWidth="35" fitHeight="35" pickOnBounds="true"
+                       onMouseClicked="#minimize"/>
         </HBox>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+        <VBox AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
               AnchorPane.topAnchor="40.0">
             <HBox maxHeight="25" minHeight="25">
                 <MenuBar maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" HBox.hgrow="NEVER">
@@ -49,15 +51,19 @@
             </HBox>
         </VBox>
     </AnchorPane>
-    <Pane styleClass="helloBox" fx:id="helloBox" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
-
-    </Pane>
+    <VBox styleClass="helloBox" fx:id="helloBox" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0"
+          AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+        <Text styleClass="helloText" fill="aqua">Hello,</Text>
+        <Text styleClass="helloText" fx:id="nickHello"> </Text>
+    </VBox>
     <AnchorPane styleClass="authBox" fx:id="authBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <HBox styleClass="top_panel" minHeight="40" maxHeight="40" prefHeight="40" AnchorPane.leftAnchor="0.0"
               AnchorPane.rightAnchor="0.0" nodeOrientation="RIGHT_TO_LEFT">
-            <ImageView styleClass="exit_button" fitWidth="30" fitHeight="30" pickOnBounds="true"
+            <ImageView styleClass="exit_button" fitWidth="35" fitHeight="35" pickOnBounds="true"
                        onMouseClicked="#close"/>
+            <ImageView styleClass="min_button" fitWidth="35" fitHeight="35" pickOnBounds="true"
+                       onMouseClicked="#minimize"/>
         </HBox>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" alignment="CENTER">

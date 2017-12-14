@@ -46,6 +46,7 @@ class ClientHandler {
                             String[] auth = message.split(" ");
                             String pong = dbHandler.getUserPassword(auth[1], auth[2]);
                             sendMessage(pong);
+                            sendMessage(getNickName());
                             if (pong.equals("/authok")) {
                                 autorized = true;
                                 break;
