@@ -4,16 +4,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.*;
 
 class ClientHandler {
     private Server server;
     private Socket socket;
     private DataOutputStream outputStream;
     private DataInputStream inputStream;
-    private Connection connection;
-    private PreparedStatement statement;
     private String nickName;
+    private boolean autorized = false;
+    private DBHandler dbHandler;
 
     ClientHandler(Socket socket, Server server) {
         try {
@@ -21,23 +20,40 @@ class ClientHandler {
             this.server = server;
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
+            dbHandler = new DBHandler(server, this);
+
+            Thread threadDisconnectTimer = new Thread(()->{
+                try {
+                    Thread.sleep(120000);
+                    if (!autorized){
+                        socket.close();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    System.out.println("socket already closed");
+                }
+            });
+            threadDisconnectTimer.setDaemon(true);
+            threadDisconnectTimer.start();
 
             Thread thread = new Thread(() -> {
                 try {
-                    connectDB();
+                    dbHandler.connect();
                     while (true) {
                         String message = inputStream.readUTF();
                         if (message.startsWith("/autho")) {
                             String[] auth = message.split(" ");
-                            String pong = getUserPassword(auth[1], auth[2]);
+                            String pong = dbHandler.getUserPassword(auth[1], auth[2]);
                             sendMessage(pong);
                             if (pong.equals("/authok")) {
+                                autorized = true;
                                 break;
                             }
                         }
                     }
                     server.subscribe(this);
-                    closeDB();
+                    dbHandler.close();
                     while (true) {
                         String message = inputStream.readUTF();
                         if (message.equals("/shutdown")) {
@@ -51,7 +67,9 @@ class ClientHandler {
                 } catch (IOException e) {
                     System.out.println("client lost connection");
                 } finally {
-                    server.unsubscribe(this);
+                    if (autorized){
+                        server.unsubscribe(this);
+                    }
                     try {
                         socket.close();
                         inputStream.close();
@@ -77,54 +95,11 @@ class ClientHandler {
         }
     }
 
-    private String getUserPassword(String login, String password) {
-        ResultSet rs;
-        try {
-            statement.setString(1, login);
-            rs = statement.executeQuery();
-            if (rs.next()) {
-                if (rs.getString(1).equals(password)) {
-                    if (server.isNickNameNotInUse(rs.getString(2))) {
-                        nickName = rs.getString(2);
-                        return "/authok";
-                    } else {
-                        return "/authbusy";
-                    }
-                } else {
-                    return "/authpassword";
-                }
-            } else {
-                return "/authnotexist";
-            }
-        } catch (SQLException e) {
-            System.out.println("ex1");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void connectDB() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/jetbrains3?user=root&password=root");
-            statement = connection.prepareStatement("SELECT password, nick FROM users WHERE login = ?;");
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("Database connection error");
-            e.printStackTrace();
-        }
-    }
-
-    private void closeDB() {
-        try {
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            System.out.println("database closing error");
-        }
-    }
-
     String getNickName() {
         return nickName;
     }
 
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
 }

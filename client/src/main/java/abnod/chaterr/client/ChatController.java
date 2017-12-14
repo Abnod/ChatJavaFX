@@ -1,6 +1,7 @@
 package abnod.chaterr.client;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -22,7 +24,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ChatController implements Initializable {
-    private final String SERVER_IP = "10.0.0.58";
+    private final String SERVER_IP = "localhost";
     private final int SERVER_PORT = 8189;
     @FXML
     private TextField inputField, loginField;
@@ -32,6 +34,8 @@ public class ChatController implements Initializable {
     private PasswordField passwordField;
     @FXML
     private AnchorPane authBox, textBox;
+    @FXML
+    private Pane helloBox;
     private ObservableList<String> chatMessages, userList;
 
     private Socket socket;
@@ -40,9 +44,6 @@ public class ChatController implements Initializable {
     private FadeTransition ft;
 
     private boolean autorized;
-
-    //todo
-    // login(transp)-hello(swipe)-chat
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -59,24 +60,40 @@ public class ChatController implements Initializable {
         chatMessages = FXCollections.observableArrayList();
         userList = FXCollections.observableArrayList();
         chatWindow.setItems(chatMessages);
-        try {
-            connect();
-        } catch (IOException e) {
-            viewMessage("server not found");
-        }
-
+        
         ft = new FadeTransition();
         ft.setNode(authBox);
         ft.setDuration(new Duration(500));
         ft.setFromValue(0.5);
         ft.setToValue(0.0);
         ft.setCycleCount(1);
-        ft.setAutoReverse(true);
+
+        TranslateTransition tt = new TranslateTransition();
+        tt.setDelay(new Duration(2000));
+        tt.setNode(helloBox);
+        tt.setDuration(new Duration(1000));
+        tt.setFromY(0);
+        tt.setCycleCount(1);
+
+        TranslateTransition tt2 = new TranslateTransition();
+        tt2.setDelay(new Duration(2000));
+        tt2.setNode(textBox);
+        tt2.setDuration(new Duration(1000));
+        tt2.setCycleCount(1);
+
         ft.setOnFinished(event -> {
             if (authBox.isVisible()) {
+                tt.setToY(helloBox.getHeight());
+                tt2.setToY(0);
+                tt2.setFromY(-textBox.getHeight());
                 authBox.setVisible(false);
+                tt.play();
+                tt2.play();
                 textBox.setDisable(false);
             }
+        });
+        tt.setOnFinished(event->{
+            helloBox.setVisible(false);
         });
     }
 
@@ -108,8 +125,10 @@ public class ChatController implements Initializable {
             ft.play();
         } else {
             authBox.setOpacity(1);
-            textBox.setDisable(true);
             authBox.setVisible(true);
+            helloBox.setTranslateY(0);
+            textBox.setDisable(true);
+            helloBox.setVisible(true);
         }
 
     }

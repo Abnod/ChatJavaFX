@@ -21,6 +21,10 @@
 .textBox{
 }
 
+.helloBox{
+    -fx-background-color: forestgreen;
+}
+
 .exit_button {
     -fx-image: url("/power30.png");
 }
