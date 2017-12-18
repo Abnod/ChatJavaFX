@@ -16,10 +16,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.json.simple.JSONObject;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -44,9 +43,10 @@ public class ChatController implements Initializable {
 
     private Stage stage;
     private Socket socket;
-    private DataInputStream inputStream;
-    private DataOutputStream outputStream;
+    private ObjectInputStream inputStream;
+    private ObjectOutputStream outputStream;
     private FadeTransition ft;
+    private JSONObject jsonObject;
 
     private String nickName;
     private boolean autorized;
@@ -66,7 +66,12 @@ public class ChatController implements Initializable {
         chatMessages = FXCollections.observableArrayList();
         userList = FXCollections.observableArrayList();
         chatWindow.setItems(chatMessages);
-        
+        jsonObject = new JSONObject();
+
+        createAnimation();
+    }
+
+    private void createAnimation() {
         ft = new FadeTransition();
         ft.setNode(authBox);
         ft.setDuration(new Duration(500));
@@ -98,14 +103,14 @@ public class ChatController implements Initializable {
                 textBox.setDisable(false);
             }
         });
-        tt.setOnFinished(event->{
+        tt.setOnFinished(event -> {
             helloBox.setVisible(false);
         });
     }
 
     public void sendMessage() throws IOException {
         if (!inputField.getText().equals("")) {
-            outputStream.writeUTF(inputField.getText());
+//            outputStream.writeUTF(inputField.getText());
             inputField.clear();
             inputField.requestFocus();
         }
@@ -117,7 +122,11 @@ public class ChatController implements Initializable {
                 if (socket == null || socket.isClosed()) {
                     connect();
                 }
-                outputStream.writeUTF("/autho " + loginField.getText() + " " + passwordField.getText());
+                jsonObject.put("type", "login");
+                jsonObject.put("login", loginField.getText());
+                jsonObject.put("password", passwordField.getText());
+                outputStream.writeObject(jsonObject);
+                jsonObject.clear();
             } else {
                 viewMessage("login and password fields cannot be empty");
             }
@@ -142,53 +151,70 @@ public class ChatController implements Initializable {
 
     private void connect() throws IOException {
         socket = new Socket(SERVER_IP, SERVER_PORT);
-        inputStream = new DataInputStream(socket.getInputStream());
-        outputStream = new DataOutputStream(socket.getOutputStream());
+        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        inputStream = new ObjectInputStream(socket.getInputStream());
         Thread inputThread = new Thread(() -> {
             try {
                 userWindow.setItems(userList);
                 while (true) {
-                    String s = inputStream.readUTF();
+                    jsonObject = (JSONObject) inputStream.readObject();
+                    String s = (String) jsonObject.get("auth");
                     switch (s) {
-                        case "/authok": {
+                        case "ok": {
                             autorized = true;
                             viewMessage("Server: Login successful");
                             viewMessage("Server: for private message write: /w nickname message");
-                            nickName = inputStream.readUTF();
+                            nickName = (String) jsonObject.get("nickName");
                             authorize();
                             break;
                         }
-                        case "/authpassword": {
+                        case "password": {
                             viewMessage("Server: Wrong password");
                             break;
                         }
-                        case "/authbusy": {
+                        case "busy": {
                             viewMessage("Server: Account already in use");
                             break;
                         }
-                        case "/authnotexist": {
+                        case "notexist": {
                             viewMessage("Server: User not exist");
                             break;
                         }
                     }
                     if (autorized) {
+                        jsonObject.clear();
                         break;
                     }
                 }
                 while (true) {
-                    String s = inputStream.readUTF();
-                    if (s.startsWith("/usradd")) {
-                        String usradd = s.substring(9);
-                        usersAdd(usradd);
-                    } else if (s.startsWith("/usrrmv")) {
-                        String usrrmv = s.substring(9);
-                        usersRemove(usrrmv);
-                    } else {
-                        viewMessage(s);
+                    jsonObject = (JSONObject) inputStream.readObject();
+                    System.out.println("in: " + jsonObject.toString());
+                    String type = (String) jsonObject.get("type");
+                    if (type != null) {
+                        switch (type) {
+                            case "addUser": {
+                                String nick = (String) jsonObject.get("nickName");
+                                usersAdd(nick);
+                                break;
+                            }
+                            case "rmvUser": {
+                                String nick = (String) jsonObject.get("nickName");
+                                usersRemove(nick);
+                                break;
+                            }
+                            case "message":
+                                String message = (String) jsonObject.get("message");
+                                String sender = (String) jsonObject.get("sender");
+                                viewMessage(message, sender);
+                                break;
+                        }
                     }
+                    jsonObject.clear();
                 }
             } catch (IOException e) {
                 viewMessage("Connection to server lost");
+            } catch (Exception e) {
+                e.printStackTrace();
             } finally {
                 autorized = false;
                 authorize();
@@ -211,6 +237,11 @@ public class ChatController implements Initializable {
         Platform.runLater(() -> chatMessages.add(s));
     }
 
+    private void viewMessage(String s, String sender) {
+        String message = sender + ": " + s;
+        Platform.runLater(() -> chatMessages.add(message));
+    }
+
     private void usersAdd(String s) {
         if (!userList.contains(s)) {
             Platform.runLater(() -> userList.add(s));
@@ -221,11 +252,11 @@ public class ChatController implements Initializable {
         Platform.runLater(() -> userList.remove(s));
     }
 
-    public void minimize(){
+    public void minimize() {
         stage.setIconified(true);
     }
 
-    public void setStage(Stage stage) {
+    void setStage(Stage stage) {
         this.stage = stage;
     }
 

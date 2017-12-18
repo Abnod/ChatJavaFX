@@ -34,15 +34,15 @@ class DBHandler {
                 if (rs.getString(1).equals(password)) {
                     if (server.isNickNameNotInUse(rs.getString(2))) {
                         clientHandler.setNickName(rs.getString(2));
-                        return "/authok";
+                        return "ok";
                     } else {
-                        return "/authbusy";
+                        return "busy";
                     }
                 } else {
-                    return "/authpassword";
+                    return "password";
                 }
             } else {
-                return "/authnotexist";
+                return "notexist";
             }
         } catch (SQLException e) {
             System.out.println("ex1");

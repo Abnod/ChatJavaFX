@@ -28,8 +28,8 @@
 }
 
 .helloBox{
-    -fx-background-image: url("/helloBack.jpg");
-    -fx-background-repeat: stretch;
+    -fx-background-image: url("/loginBg.jpg");
+    -fx-background-position: top left;
     -fx-alignment: center;
 }
 
