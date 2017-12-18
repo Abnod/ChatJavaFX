@@ -1,31 +1,32 @@
 package abnod.chaterr.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import org.json.simple.JSONObject;
+
+import java.io.*;
 import java.net.Socket;
 
 class ClientHandler {
     private Server server;
     private Socket socket;
-    private DataOutputStream outputStream;
-    private DataInputStream inputStream;
+    private ObjectOutputStream outputStream;
+    private ObjectInputStream inputStream;
     private String nickName;
     private boolean autorized = false;
     private DBHandler dbHandler;
+    private JSONObject jsonObject = new JSONObject();
 
     ClientHandler(Socket socket, Server server) {
         try {
             this.socket = socket;
             this.server = server;
-            inputStream = new DataInputStream(socket.getInputStream());
-            outputStream = new DataOutputStream(socket.getOutputStream());
+            outputStream = new ObjectOutputStream(socket.getOutputStream());
+            inputStream = new ObjectInputStream(socket.getInputStream());
             dbHandler = new DBHandler(server, this);
 
-            Thread threadDisconnectTimer = new Thread(()->{
+            Thread threadDisconnectTimer = new Thread(() -> {
                 try {
                     Thread.sleep(120000);
-                    if (!autorized){
+                    if (!autorized) {
                         socket.close();
                     }
                 } catch (InterruptedException e) {
@@ -41,34 +42,51 @@ class ClientHandler {
                 try {
                     dbHandler.connect();
                     while (true) {
-                        String message = inputStream.readUTF();
-                        if (message.startsWith("/autho")) {
-                            String[] auth = message.split(" ");
-                            String pong = dbHandler.getUserPassword(auth[1], auth[2]);
-                            sendMessage(pong);
-                            sendMessage(getNickName());
-                            if (pong.equals("/authok")) {
+                        jsonObject = (JSONObject) inputStream.readObject();
+                        String type = (String) jsonObject.get("type");
+                        if (type.equals("login")) {
+                            String login = (String) jsonObject.get("login");
+                            String password = (String) jsonObject.get("password");
+                            jsonObject.clear();
+                            String pong = dbHandler.getUserPassword(login, password);
+                            jsonObject.put("auth", pong);
+                            jsonObject.put("nickName", getNickName());
+                            sendMessage(jsonObject);
+                            if (pong.equals("ok")) {
                                 autorized = true;
+                                jsonObject.clear();
                                 break;
                             }
+                        } else if (type.equals("register")) {
+                            //todo
                         }
                     }
                     server.subscribe(this);
                     dbHandler.close();
+
                     while (true) {
-                        String message = inputStream.readUTF();
-                        if (message.equals("/shutdown")) {
-                            server.close();
-                        } else if (message.startsWith("/w ")) {
-                            server.sendPrivateMessage(message, this);
-                        } else {
-                            server.broadcastMessage(message, getNickName());
+                        jsonObject = (JSONObject) inputStream.readObject();
+                        System.out.println(jsonObject);
+                        String type = (String) jsonObject.get("type");
+                        if (type != null) {
+                            if (type.equals("shutdown")) {
+                                server.close();
+                            } else if (type.equals("whisper")) {
+                                String message = (String) jsonObject.get("message");
+                                server.sendPrivateMessage(message, this);
+                            } else {
+                                String message = (String) jsonObject.get("message");
+                                server.broadcastMessage(message, getNickName());
+                            }
                         }
+                        jsonObject.clear();
                     }
                 } catch (IOException e) {
                     System.out.println("client lost connection");
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                 } finally {
-                    if (autorized){
+                    if (autorized) {
                         server.unsubscribe(this);
                     }
                     try {
@@ -87,9 +105,11 @@ class ClientHandler {
         }
     }
 
-    void sendMessage(String message) {
+    void sendMessage(JSONObject message) {
         try {
-            outputStream.writeUTF(message);
+            outputStream.writeObject(message);
+            System.out.println("out:" + message.toString());
+            outputStream.flush();
         } catch (IOException e) {
             System.out.println("ex4");
             e.printStackTrace();
@@ -100,7 +120,7 @@ class ClientHandler {
         return nickName;
     }
 
-    public void setNickName(String nickName) {
+    void setNickName(String nickName) {
         this.nickName = nickName;
     }
 }
