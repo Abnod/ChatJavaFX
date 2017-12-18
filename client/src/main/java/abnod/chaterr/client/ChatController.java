@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ChatController implements Initializable {
-    private final String SERVER_IP = "10.0.0.58";
+    private final String SERVER_IP = "localhost";
     private final int SERVER_PORT = 8189;
     @FXML
     private TextField inputField, loginField;
