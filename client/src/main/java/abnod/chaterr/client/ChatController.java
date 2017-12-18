@@ -46,7 +46,6 @@ public class ChatController implements Initializable {
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
     private FadeTransition ft;
-    private JSONObject jsonObject;
 
     private String nickName;
     private boolean autorized;
@@ -66,7 +65,6 @@ public class ChatController implements Initializable {
         chatMessages = FXCollections.observableArrayList();
         userList = FXCollections.observableArrayList();
         chatWindow.setItems(chatMessages);
-        jsonObject = new JSONObject();
 
         createAnimation();
     }
@@ -110,7 +108,11 @@ public class ChatController implements Initializable {
 
     public void sendMessage() throws IOException {
         if (!inputField.getText().equals("")) {
-//            outputStream.writeUTF(inputField.getText());
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", "message");
+            jsonObject.put("message", inputField.getText());
+            outputStream.writeObject(jsonObject);
+            outputStream.flush();
             inputField.clear();
             inputField.requestFocus();
         }
@@ -122,6 +124,7 @@ public class ChatController implements Initializable {
                 if (socket == null || socket.isClosed()) {
                     connect();
                 }
+                JSONObject jsonObject = new JSONObject();
                 jsonObject.put("type", "login");
                 jsonObject.put("login", loginField.getText());
                 jsonObject.put("password", passwordField.getText());
@@ -157,7 +160,7 @@ public class ChatController implements Initializable {
             try {
                 userWindow.setItems(userList);
                 while (true) {
-                    jsonObject = (JSONObject) inputStream.readObject();
+                    JSONObject jsonObject = (JSONObject) inputStream.readObject();
                     String s = (String) jsonObject.get("auth");
                     switch (s) {
                         case "ok": {
@@ -182,12 +185,11 @@ public class ChatController implements Initializable {
                         }
                     }
                     if (autorized) {
-                        jsonObject.clear();
                         break;
                     }
                 }
                 while (true) {
-                    jsonObject = (JSONObject) inputStream.readObject();
+                    JSONObject jsonObject = (JSONObject) inputStream.readObject();
                     System.out.println("in: " + jsonObject.toString());
                     String type = (String) jsonObject.get("type");
                     if (type != null) {
@@ -209,7 +211,6 @@ public class ChatController implements Initializable {
                                 break;
                         }
                     }
-                    jsonObject.clear();
                 }
             } catch (IOException e) {
                 viewMessage("Connection to server lost");

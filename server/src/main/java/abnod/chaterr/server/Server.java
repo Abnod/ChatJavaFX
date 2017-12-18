@@ -9,14 +9,12 @@ import java.util.Vector;
 
 class Server {
 
-    private JSONObject jsonObject;
     private Vector<ClientHandler> clients;
 
     Server() {
 
         try (ServerSocket serverSocket = new ServerSocket(8189)) {
             clients = new Vector<>();
-            jsonObject = new JSONObject();
 
             System.out.println("Server launched.");
             while (true) {
@@ -34,7 +32,7 @@ class Server {
     void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
         broadcastMessage(clientHandler.getNickName() + " joined chat", "Server");
-        broadcastMessage(clientHandler.getNickName() + " joined ololol", "Server");
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "addUser");
         for (ClientHandler clientHandlerLoop : clients) {
             if (clientHandlerLoop.getNickName().equals(clientHandler.getNickName())) {
@@ -49,7 +47,7 @@ class Server {
 
     void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
-
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "rmvUser");
         jsonObject.put("nickName", clientHandler.getNickName());
         broadcastServiceMessage(jsonObject);
@@ -63,19 +61,20 @@ class Server {
     }
 
     void broadcastMessage(String message, String senderNickName) {
+        JSONObject jsonObject = new JSONObject();
         for (ClientHandler client : clients) {
             jsonObject.put("type", "message");
             jsonObject.put("sender", senderNickName);
             jsonObject.put("message", message);
             client.sendMessage(jsonObject);
         }
-        jsonObject.clear();
     }
 
     void sendPrivateMessage(String message, ClientHandler sender) {
         String[] msg = message.split(" ");
         String text = message.substring(message.indexOf(msg[2]));
         boolean privateSent = false;
+        JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "message");
         jsonObject.put("message", text);
         for (ClientHandler client : clients) {

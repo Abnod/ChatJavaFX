@@ -19,14 +19,14 @@ class ClientHandler {
         try {
             this.socket = socket;
             this.server = server;
-            inputStream = new ObjectInputStream(socket.getInputStream());
             outputStream = new ObjectOutputStream(socket.getOutputStream());
+            inputStream = new ObjectInputStream(socket.getInputStream());
             dbHandler = new DBHandler(server, this);
 
-            Thread threadDisconnectTimer = new Thread(()->{
+            Thread threadDisconnectTimer = new Thread(() -> {
                 try {
                     Thread.sleep(120000);
-                    if (!autorized){
+                    if (!autorized) {
                         socket.close();
                     }
                 } catch (InterruptedException e) {
@@ -42,11 +42,11 @@ class ClientHandler {
                 try {
                     dbHandler.connect();
                     while (true) {
-                        jsonObject = (JSONObject)inputStream.readObject();
-                        String type = (String)jsonObject.get("type");
+                        jsonObject = (JSONObject) inputStream.readObject();
+                        String type = (String) jsonObject.get("type");
                         if (type.equals("login")) {
-                            String login = (String)jsonObject.get("login");
-                            String password = (String)jsonObject.get("password");
+                            String login = (String) jsonObject.get("login");
+                            String password = (String) jsonObject.get("password");
                             jsonObject.clear();
                             String pong = dbHandler.getUserPassword(login, password);
                             jsonObject.put("auth", pong);
@@ -57,7 +57,7 @@ class ClientHandler {
                                 jsonObject.clear();
                                 break;
                             }
-                        } else if (type.equals("register")){
+                        } else if (type.equals("register")) {
                             //todo
                         }
                     }
@@ -65,9 +65,10 @@ class ClientHandler {
                     dbHandler.close();
 
                     while (true) {
-                        jsonObject.clear();
-                        jsonObject = (JSONObject)inputStream.readObject();
-                            String type = (String) jsonObject.get("type");
+                        jsonObject = (JSONObject) inputStream.readObject();
+                        System.out.println(jsonObject);
+                        String type = (String) jsonObject.get("type");
+                        if (type != null) {
                             if (type.equals("shutdown")) {
                                 server.close();
                             } else if (type.equals("whisper")) {
@@ -77,13 +78,15 @@ class ClientHandler {
                                 String message = (String) jsonObject.get("message");
                                 server.broadcastMessage(message, getNickName());
                             }
+                        }
+                        jsonObject.clear();
                     }
                 } catch (IOException e) {
                     System.out.println("client lost connection");
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } finally {
-                    if (autorized){
+                    if (autorized) {
                         server.unsubscribe(this);
                     }
                     try {
