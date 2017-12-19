@@ -10,6 +10,7 @@ import java.util.Vector;
 class Server {
 
     private Vector<ClientHandler> clients;
+    JSONObject jsonObject;
 
     Server() {
 
@@ -21,7 +22,7 @@ class Server {
                 Socket socket = serverSocket.accept();
                 new ClientHandler(socket, this);
                 System.out.printf("client with ip %s connected", socket.getInetAddress().getHostAddress());
-                System.out.println(System.lineSeparator());
+                System.out.println();
             }
         } catch (IOException e) {
             System.out.println("socket exception");
@@ -32,9 +33,10 @@ class Server {
     void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
         broadcastMessage(clientHandler.getNickName() + " joined chat", "Server");
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("type", "addUser");
+
         for (ClientHandler clientHandlerLoop : clients) {
+            jsonObject = new JSONObject();
+            jsonObject.put("type", "addUser");
             if (clientHandlerLoop.getNickName().equals(clientHandler.getNickName())) {
                 jsonObject.put("nickName", clientHandler.getNickName());
                 broadcastServiceMessage(jsonObject);
@@ -47,7 +49,7 @@ class Server {
 
     void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
-        JSONObject jsonObject = new JSONObject();
+        jsonObject = new JSONObject();
         jsonObject.put("type", "rmvUser");
         jsonObject.put("nickName", clientHandler.getNickName());
         broadcastServiceMessage(jsonObject);
@@ -61,7 +63,7 @@ class Server {
     }
 
     void broadcastMessage(String message, String senderNickName) {
-        JSONObject jsonObject = new JSONObject();
+        jsonObject = new JSONObject();
         for (ClientHandler client : clients) {
             jsonObject.put("type", "message");
             jsonObject.put("sender", senderNickName);
@@ -70,24 +72,27 @@ class Server {
         }
     }
 
-    void sendPrivateMessage(String message, ClientHandler sender) {
-        String[] msg = message.split(" ");
-        String text = message.substring(message.indexOf(msg[2]));
+    void sendPrivateMessage(String message, ClientHandler sender, String nameTo) {
         boolean privateSent = false;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("type", "message");
-        jsonObject.put("message", text);
+        jsonObject.put("message", message);
         for (ClientHandler client : clients) {
-            if (client.getNickName().equals(msg[1])) {
-                jsonObject.put("sender", sender.getNickName() + " whispers to you:");
+            if (client.getNickName().equals(nameTo)) {
+                jsonObject.put("sender", sender.getNickName() + " whispers to you");
                 client.sendMessage(jsonObject);
                 privateSent = true;
             }
             if (privateSent) {
-                jsonObject.put("sender", "You whispers to " + client.getNickName() + ":");
+                jsonObject.put("sender", "You whispers to " + client.getNickName());
                 sender.sendMessage(jsonObject);
                 break;
             }
+        }
+        if (!privateSent) {
+            jsonObject.put("message", "message recipient not found");
+            jsonObject.put("sender", "Server");
+            sender.sendMessage(jsonObject);
         }
     }
 

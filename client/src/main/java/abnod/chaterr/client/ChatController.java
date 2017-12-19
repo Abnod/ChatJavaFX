@@ -65,7 +65,6 @@ public class ChatController implements Initializable {
         chatMessages = FXCollections.observableArrayList();
         userList = FXCollections.observableArrayList();
         chatWindow.setItems(chatMessages);
-
         createAnimation();
     }
 
@@ -107,14 +106,30 @@ public class ChatController implements Initializable {
     }
 
     public void sendMessage() throws IOException {
-        if (!inputField.getText().equals("")) {
+        String msg = inputField.getText();
+        inputField.clear();
+        inputField.requestFocus();
+        if (!msg.equals("")) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("type", "message");
-            jsonObject.put("message", inputField.getText());
+            //msg.length() > 5 == /w (3 char) + nick(1 char min) + ,(separator) + ' '(1 char min)
+            if (msg.startsWith("/w ") && msg.length() > 5 && msg.contains(",")) {
+                msg = msg.substring(3); //remove '/w '
+                if (msg.length() > msg.indexOf(",")) {
+                    String toName = msg.substring(0, msg.indexOf(","));
+                    if (toName.equals(nickName)) {
+                        viewMessage("cannot send private message to self");
+                        return;
+                    }
+                    jsonObject.put("type", "whisper");
+                    jsonObject.put("to", toName);
+                    jsonObject.put("message", msg.substring(msg.indexOf(",") + 1));
+                }
+            } else {
+                jsonObject.put("type", "message");
+                jsonObject.put("message", msg);
+            }
             outputStream.writeObject(jsonObject);
             outputStream.flush();
-            inputField.clear();
-            inputField.requestFocus();
         }
     }
 
@@ -129,7 +144,6 @@ public class ChatController implements Initializable {
                 jsonObject.put("login", loginField.getText());
                 jsonObject.put("password", passwordField.getText());
                 outputStream.writeObject(jsonObject);
-                jsonObject.clear();
             } else {
                 viewMessage("login and password fields cannot be empty");
             }
@@ -166,7 +180,7 @@ public class ChatController implements Initializable {
                         case "ok": {
                             autorized = true;
                             viewMessage("Server: Login successful");
-                            viewMessage("Server: for private message write: /w nickname message");
+                            viewMessage("Server: For private message write: /w nickname, message");
                             nickName = (String) jsonObject.get("nickName");
                             authorize();
                             break;
@@ -190,7 +204,6 @@ public class ChatController implements Initializable {
                 }
                 while (true) {
                     JSONObject jsonObject = (JSONObject) inputStream.readObject();
-                    System.out.println("in: " + jsonObject.toString());
                     String type = (String) jsonObject.get("type");
                     if (type != null) {
                         switch (type) {

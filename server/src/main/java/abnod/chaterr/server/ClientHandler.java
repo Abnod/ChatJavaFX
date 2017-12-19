@@ -44,17 +44,19 @@ class ClientHandler {
                     while (true) {
                         jsonObject = (JSONObject) inputStream.readObject();
                         String type = (String) jsonObject.get("type");
+
                         if (type.equals("login")) {
                             String login = (String) jsonObject.get("login");
                             String password = (String) jsonObject.get("password");
                             jsonObject.clear();
+
                             String pong = dbHandler.getUserPassword(login, password);
                             jsonObject.put("auth", pong);
                             jsonObject.put("nickName", getNickName());
                             sendMessage(jsonObject);
+
                             if (pong.equals("ok")) {
                                 autorized = true;
-                                jsonObject.clear();
                                 break;
                             }
                         } else if (type.equals("register")) {
@@ -68,18 +70,22 @@ class ClientHandler {
                         jsonObject = (JSONObject) inputStream.readObject();
                         System.out.println(jsonObject);
                         String type = (String) jsonObject.get("type");
-                        if (type != null) {
-                            if (type.equals("shutdown")) {
+                        switch (type) {
+                            case "shutdown":
                                 server.close();
-                            } else if (type.equals("whisper")) {
+                                break;
+                            case "whisper": {
+                                String nameTo = (String) jsonObject.get("to");
                                 String message = (String) jsonObject.get("message");
-                                server.sendPrivateMessage(message, this);
-                            } else {
+                                server.sendPrivateMessage(message, this, nameTo);
+                                break;
+                            }
+                            case "message": {
                                 String message = (String) jsonObject.get("message");
                                 server.broadcastMessage(message, getNickName());
+                                break;
                             }
                         }
-                        jsonObject.clear();
                     }
                 } catch (IOException e) {
                     System.out.println("client lost connection");
@@ -108,7 +114,6 @@ class ClientHandler {
     void sendMessage(JSONObject message) {
         try {
             outputStream.writeObject(message);
-            System.out.println("out:" + message.toString());
             outputStream.flush();
         } catch (IOException e) {
             System.out.println("ex4");
