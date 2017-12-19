@@ -8,7 +8,8 @@
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="abnod.chaterr.client.RegisterController" minHeight="200" maxHeight="200" minWidth="300" maxWidth="300"
+      fx:controller="abnod.chaterr.client.RegisterController" minHeight="200" maxHeight="200" minWidth="300"
+      maxWidth="300"
       styleClass="loginBox" spacing="20" alignment="CENTER">
     <TextField fx:id="loginField" promptText="Login" maxWidth="240" minWidth="240"/>
     <PasswordField fx:id="passwordField" promptText="Password" maxWidth="240"

@@ -2,8 +2,9 @@
     font-family: RuslanDisplay;
     src: url('/RuslanDisplay.ttf');
 }
+
 TextField,
-PasswordField{
+PasswordField {
     -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
 }
 
@@ -24,26 +25,26 @@ PasswordField{
     -fx-background-position: top left;
 }
 
-.loginBox{
-    -fx-background-image: url("/authBack.jpg") ;
+.loginBox {
+    -fx-background-image: url("/authBack.jpg");
     -fx-background-position: center;
 }
 
-.top_panel{
+.top_panel {
     -fx-padding: 2px;
 }
 
-.textBox{
+.textBox {
     -fx-background-image: url("/loginBg.jpg");
 }
 
-.helloBox{
+.helloBox {
     -fx-background-image: url("/loginBg.jpg");
     -fx-background-position: top left;
     -fx-alignment: center;
 }
 
-.helloText{
+.helloText {
     -fx-font: 80pt "RuslanDisplay";
     -fx-fill: white;
 }
@@ -62,4 +63,9 @@ PasswordField{
 
 .min_button:hover {
     -fx-image: url("/min30Active.png");
+}
+
+.errorLabel {
+    -fx-font: 11pt "RuslanDisplay";
+    -fx-text-fill: crimson;
 }

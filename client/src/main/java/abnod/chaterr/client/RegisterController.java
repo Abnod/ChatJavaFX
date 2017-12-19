@@ -1,6 +1,8 @@
 package abnod.chaterr.client;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -10,6 +12,7 @@ public class RegisterController {
     private TextField loginField, nickField;
     @FXML
     private PasswordField passwordField;
+
     ChatController chatController;
 
     public void setChatController(ChatController chatController) {
@@ -20,6 +23,6 @@ public class RegisterController {
     }
 
     public void backToLogin() {
-        chatController.openLoginScreen();
+        chatController.setLoginScreen();
     }
 }

@@ -21,11 +21,11 @@ public class LoginController {
         if (!loginField.getText().isEmpty() && !passwordField.getText().isEmpty()) {
             chatController.sendAuth(loginField.getText(), passwordField.getText());
         } else {
-            chatController.viewMessage("login and password fields cannot be empty");
+            chatController.setLoginText("login and password fields cannot be empty");
         }
     }
 
     public void openRegistration() {
-        chatController.openRegistrationScreen();
+        chatController.setRegScreen();
     }
 }

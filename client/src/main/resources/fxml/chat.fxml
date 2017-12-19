@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -54,7 +53,7 @@
     <VBox styleClass="helloBox" fx:id="helloBox" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0"
           AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
         <Text styleClass="helloText" fill="aqua">Hello,</Text>
-        <Text styleClass="helloText" fx:id="nickHello"> </Text>
+        <Text styleClass="helloText" fx:id="nickHello"></Text>
     </VBox>
     <AnchorPane styleClass="authBox" fx:id="authBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
