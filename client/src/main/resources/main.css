@@ -54,7 +54,7 @@ PasswordField {
 }
 
 .exit_button:hover {
-    -fx-image: url("/power30active.png");
+    -fx-image: url("/power30Active.png");
 }
 
 .min_button {
