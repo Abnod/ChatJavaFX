@@ -66,15 +66,7 @@
                        onMouseClicked="#minimize"/>
         </HBox>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" alignment="CENTER">
-            <VBox styleClass="loginBox" spacing="30" minHeight="200" maxHeight="200" minWidth="300" maxWidth="300"
-                  alignment="CENTER">
-                <TextField fx:id="loginField" promptText="Login" maxWidth="240" minWidth="240"/>
-                <PasswordField fx:id="passwordField" onAction="#sendAuth" promptText="Password" maxWidth="240"
-                               minWidth="240"/>
-                <Button maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#sendAuth"
-                        styleClass="loginButton" text="Login"/>
-            </VBox>
+              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" alignment="CENTER" fx:id="changeBox">
         </VBox>
     </AnchorPane>
 </AnchorPane>

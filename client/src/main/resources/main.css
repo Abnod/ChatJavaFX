@@ -2,9 +2,19 @@
     font-family: RuslanDisplay;
     src: url('/RuslanDisplay.ttf');
 }
+TextField,
+PasswordField{
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+}
 
-.loginButton {
+.mainButton {
     -fx-background-color: forestgreen;
+    -fx-text-fill: white;
+    -fx-background-radius: 0px;
+}
+
+.secondButton {
+    -fx-background-color: #003a92;
     -fx-text-fill: white;
     -fx-background-radius: 0px;
 }

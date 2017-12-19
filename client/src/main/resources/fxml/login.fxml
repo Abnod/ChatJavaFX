@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="abnod.chaterr.client.LoginController" minHeight="200" maxHeight="200" minWidth="300" maxWidth="300"
+      styleClass="loginBox" spacing="30" alignment="CENTER">
+    <TextField fx:id="loginField" onAction="#sendAuth" promptText="Login" maxWidth="240" minWidth="240"/>
+    <PasswordField fx:id="passwordField" onAction="#sendAuth" promptText="Password" maxWidth="240"
+                   minWidth="240"/>
+    <HBox alignment="CENTER" spacing="30">
+        <Button maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#sendAuth"
+                styleClass="mainButton" text="Login"/>
+        <Button maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#openRegistration"
+                styleClass="secondButton" focusTraversable="false" text="Sign Up"/>
+    </HBox>
+</VBox>

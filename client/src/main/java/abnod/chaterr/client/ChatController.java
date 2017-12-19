@@ -6,10 +6,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -31,13 +31,15 @@ public class ChatController implements Initializable {
     @FXML
     private ListView<String> chatWindow, userWindow;
     @FXML
-    private PasswordField passwordField;
-    @FXML
     private AnchorPane authBox, textBox;
     @FXML
-    private VBox helloBox;
+    private VBox helloBox, changeBox, login, register;
     @FXML
     private Text nickHello;
+    @FXML
+    private LoginController loginController;
+    @FXML
+    private RegisterController registerController;
 
     private ObservableList<String> chatMessages, userList;
 
@@ -62,6 +64,21 @@ public class ChatController implements Initializable {
                 setGraphic(text);
             }
         });
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
+            login = loader.load();
+            loginController = loader.getController();
+            loginController.setChatController(this);
+
+            loader = new FXMLLoader(getClass().getResource("/fxml/register.fxml"));
+            register = loader.load();
+            registerController = loader.getController();
+            registerController.setChatController(this);
+        } catch (IOException e) {
+            System.out.println("cannot load inner fxml");
+            e.printStackTrace();
+        }
+        openLoginScreen();
         chatMessages = FXCollections.observableArrayList();
         userList = FXCollections.observableArrayList();
         chatWindow.setItems(chatMessages);
@@ -133,20 +150,16 @@ public class ChatController implements Initializable {
         }
     }
 
-    public void sendAuth() {
+    public void sendAuth(String login, String password) {
         try {
-            if (!loginField.getText().isEmpty() && !passwordField.getText().isEmpty()) {
-                if (socket == null || socket.isClosed()) {
-                    connect();
-                }
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("type", "login");
-                jsonObject.put("login", loginField.getText());
-                jsonObject.put("password", passwordField.getText());
-                outputStream.writeObject(jsonObject);
-            } else {
-                viewMessage("login and password fields cannot be empty");
+            if (socket == null || socket.isClosed()) {
+                connect();
             }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", "login");
+            jsonObject.put("login", login);
+            jsonObject.put("password", password);
+            outputStream.writeObject(jsonObject);
         } catch (IOException e) {
             viewMessage("Server not available");
         }
@@ -247,7 +260,7 @@ public class ChatController implements Initializable {
         inputThread.start();
     }
 
-    private void viewMessage(String s) {
+    void viewMessage(String s) {
         Platform.runLater(() -> chatMessages.add(s));
     }
 
@@ -276,5 +289,12 @@ public class ChatController implements Initializable {
 
     public void close() {
         System.exit(0);
+    }
+
+    public void openRegistrationScreen() {
+        changeBox.getChildren().setAll(register);
+    }
+    public void openLoginScreen() {
+        changeBox.getChildren().setAll(login);
     }
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="abnod.chaterr.client.RegisterController" minHeight="200" maxHeight="200" minWidth="300" maxWidth="300"
+      styleClass="loginBox" spacing="20" alignment="CENTER">
+    <TextField fx:id="loginField" promptText="Login" maxWidth="240" minWidth="240"/>
+    <PasswordField fx:id="passwordField" promptText="Password" maxWidth="240"
+                   minWidth="240"/>
+    <TextField fx:id="nickField" promptText="Nickname" maxWidth="240" minWidth="240"/>
+    <HBox alignment="CENTER" spacing="30">
+        <Button maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#register"
+                styleClass="mainButton" text="Register!"/>
+        <Button maxWidth="100.0" minWidth="100.0" mnemonicParsing="false" onAction="#backToLogin"
+                styleClass="secondButton" focusTraversable="false" text="Cancel"/>
+    </HBox>
+</VBox>

@@ -43,6 +43,7 @@ class ClientHandler {
                     dbHandler.connect();
                     while (true) {
                         jsonObject = (JSONObject) inputStream.readObject();
+                        System.out.println(jsonObject);
                         String type = (String) jsonObject.get("type");
 
                         if (type.equals("login")) {
