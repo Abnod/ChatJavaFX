@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ChatController implements Initializable {
-    private final String SERVER_IP = "10.0.0.58";
+    private final String SERVER_IP = "localhost";
     private final int SERVER_PORT = 8189;
     @FXML
     private TextField inputField;
@@ -119,6 +119,22 @@ public class ChatController implements Initializable {
         }
     }
 
+    public void sendReg(String login, String password, String nick) {
+        try {
+            if (socket == null || socket.isClosed()) {
+                connect();
+            }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", "register");
+            jsonObject.put("login", login);
+            jsonObject.put("password", password);
+            jsonObject.put("nick", nick);
+            outputStream.writeObject(jsonObject);
+        } catch (IOException e) {
+            setLoginText("Server not available");
+        }
+    }
+
     private void authorize() {
         if (autorized) {
             nickHello.setText(nickName);
@@ -164,6 +180,18 @@ public class ChatController implements Initializable {
                             setLoginText("User not exist");
                             break;
                         }
+                        case "error": {
+                            setLoginText("Database error");
+                            break;
+                        }
+                        case "nick": {
+                            setLoginText("Nickname already in use");
+                            break;
+                        }
+                        case "login": {
+                            setLoginText("Login already in use");
+                            break;
+                        }
                     }
                     if (autorized) {
                         break;
@@ -198,9 +226,9 @@ public class ChatController implements Initializable {
                 e.printStackTrace();
             } finally {
                 autorized = false;
-                authorize();
                 Platform.runLater(() -> {
-                            userList.clear();
+                    authorize();
+                    userList.clear();
                         }
                 );
                 try {
@@ -258,8 +286,8 @@ public class ChatController implements Initializable {
             label.setWrapText(true);
             label.setMinHeight(50);
             label.setMaxHeight(50);
-            label.setMinWidth(200);
-            label.setMaxWidth(200);
+            label.setMinWidth(300);
+            label.setMaxWidth(300);
         } catch (IOException e) {
             System.out.println("cannot load inner fxml");
             e.printStackTrace();

@@ -61,7 +61,19 @@ class ClientHandler {
                                 break;
                             }
                         } else if (type.equals("register")) {
-                            //todo
+                            String login = (String) jsonObject.get("login");
+                            String password = (String) jsonObject.get("password");
+                            String nick = (String) jsonObject.get("nick");
+                            jsonObject.clear();
+
+                            String pong = dbHandler.registerUser(login, password, nick);
+                            jsonObject.put("auth", pong);
+                            jsonObject.put("nickName", getNickName());
+                            sendMessage(jsonObject);
+                            if (pong.equals("ok")) {
+                                autorized = true;
+                                break;
+                            }
                         }
                     }
                     server.subscribe(this);
